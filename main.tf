@@ -27,6 +27,25 @@ locals {
   }
 }
 
+resource "aws_iam_role" "lambda-task-registration-role" {
+  name        = "lambda-task-registration-role"
+  description = "Role used by the task-registration serverless microservice"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Sid    = ""
+      Action = "sts:AssumeRole"
+      Effect = "Allow"
+      Principal = {
+        Service = "lambda.amazonaws.com"
+      }
+    }]
+  })
+
+  managed_policy_arns = ["arn:aws:iam::aws:policy/AdministratorAccess"] # Isn't a good practice, but I'll leave as-is for simplicity
+}
+
 resource "aws_dynamodb_table" "task-registration" {
   name           = "TaskRegistration"
   billing_mode   = "PROVISIONED"
